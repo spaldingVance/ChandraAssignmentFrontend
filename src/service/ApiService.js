@@ -78,21 +78,23 @@ export const ApiService = () => {
     },
   
     getUser: async (userid) => {
-      axios.get(`http://localhost:8080/user/${userid}`)
-        .then(response => {
-          console.log("Get User Response: ");
-          console.log(response);
-          if (response.data) {
-            return response.data;
-          } else {
-            return null;
-          }
-        })
-        .catch(err => {
-          console.log("ERROR");
-          console.log(err);
-          return null
-        })
+      return axios.get(`http://localhost:8080/user/${userid}`)
+        // .then( async (response) => {
+        //   console.log("Got User Response: ");
+        //   console.log(response);
+        //   if (response) {
+        //     console.log("returning response");
+        //     return response;
+        //   } else {
+        //     console.log("returning null");
+        //     return null;
+        //   }
+        // })
+        // .catch(err => {
+        //   console.log("ERROR");
+        //   console.log(err);
+        //   return null
+        // })
     },
   
     isLoggedIn: () => {

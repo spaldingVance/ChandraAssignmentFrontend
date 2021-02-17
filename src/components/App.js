@@ -66,8 +66,8 @@ class App extends React.Component {
   }
 
   render() {
-    if (this.state.userid && this.state.userid.length > 0) {
-      console.log("LOGGED IN");
+    // if (this.state.userid && this.state.userid.length > 0) {
+      // console.log("LOGGED IN");
       return (
 
         <Container className="appContainer" fluid>
@@ -87,7 +87,11 @@ class App extends React.Component {
           </Router>
         </Container >
       )
-    }
+    // } else {
+    //   return (
+
+    //   )
+    // }
   }
 }
 

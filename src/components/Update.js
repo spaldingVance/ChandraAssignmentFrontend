@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { ApiService } from '../service/ApiService'
 
-export const Update = (props) => {
+export const Update = () => {
 
   const [credentials, updateCredentials] = useState({
     loggedIn: false,
@@ -18,60 +18,67 @@ export const Update = (props) => {
     role: "USER"
   })
 
-  useEffect(async () => {
-    if (!credentials.loggedIn) {
+  useEffect(() => {
 
 
-      const token = localStorage.getItem('jwt');
-
-      console.log("logged in with userid: " + user.userid);
-      if (token && user.userid) {
-        console.log("token and userid valid");
+    const token = localStorage.getItem('jwt');
+    if (token && user.userid) {
+      console.log("token and userid valid");
 
 
-        const config = {
-          headers: { Authorization: `Bearer ${token}` }
-        };
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
 
-        axios.get('http://localhost:8080/verify', config)
-          .then(result => {
-            updateCredentials({
-              loggedIn: true,
-              verificationFinished: true
-            })
-            const apiService = ApiService();
-            apiService.getUser(user.userid).then(res => {
-              if (res) {
-                console.log("SUCCESS!");
-                console.log(res);
-                updateUser({
-                  userid: res.userid,
-                  password: res.password,
-                  name: res.name,
-                  age: res.age,
-                  role: res.role
-                })
-              } else {
-                console.log("get user failed")
-              }
-            })
-              .catch(err => {
-                console.log(err);
-                updateCredentials({
-                  loggedIn: false,
-                  verificationFinished: true
-                })
+      const getUser = ApiService().getUser;
+
+      axios.get('http://localhost:8080/verify', config)
+        .then(result => {
+          console.log("verify result: ");
+          console.log(result);
+          updateCredentials({
+            loggedIn: true,
+            verificationFinished: true
+          })
+          console.log("making get user request with userid: " + user.userid);
+          getUser(user.userid)
+          .then((res) => {
+            console.log(res);
+            if (res) {
+              console.log("SUCCESS!");
+              console.log(res);
+              updateUser({
+                userid: res.data.userid,
+                password: res.data.password,
+                name: res.data.name,
+                age: res.data.age,
+                role: res.data.role
               })
+            } else {
+
+              console.log("get user failed")
+              console.log(res);
+              console.log(res.data);
+              console.log(res.data.userid);
+            }
           })
-          .catch(err => {
-            console.log(err);
-          })
-      } else {
-        console.log("invalid token or userid");
-        console.log("token: " + token);
-        console.log("userid: " + user.userid);
-      }
+            .catch(err => {
+              console.log(err);
+              updateCredentials({
+                loggedIn: false,
+                verificationFinished: true
+              })
+            })
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    } else {
+      console.log("invalid token or userid");
+      console.log("token: " + token);
+      console.log("userid: " + user.userid);
     }
+
 
   }, [])
 
