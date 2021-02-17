@@ -19,78 +19,89 @@ export const Update = () => {
   })
 
   useEffect(() => {
+    if (!user.name) {
+      const token = localStorage.getItem('jwt');
+      if (token && user.userid) {
+        console.log("token and userid valid");
 
 
-    const token = localStorage.getItem('jwt');
-    if (token && user.userid) {
-      console.log("token and userid valid");
+        const config = {
+          headers: { Authorization: `Bearer ${token}` }
+        };
 
+        const getUser = ApiService().getUser;
 
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-
-      const getUser = ApiService().getUser;
-
-      axios.get('http://localhost:8080/verify', config)
-        .then(result => {
-          console.log("verify result: ");
-          console.log(result);
-          updateCredentials({
-            loggedIn: true,
-            verificationFinished: true
-          })
-          console.log("making get user request with userid: " + user.userid);
-          getUser(user.userid)
-          .then((res) => {
-            console.log(res);
-            if (res) {
-              console.log("SUCCESS!");
-              console.log(res);
-              updateUser({
-                userid: res.data.userid,
-                password: res.data.password,
-                name: res.data.name,
-                age: res.data.age,
-                role: res.data.role
-              })
-            } else {
-
-              console.log("get user failed")
-              console.log(res);
-              console.log(res.data);
-              console.log(res.data.userid);
-            }
-          })
-            .catch(err => {
-              console.log(err);
-              updateCredentials({
-                loggedIn: false,
-                verificationFinished: true
-              })
+        axios.get('http://localhost:8080/verify', config)
+          .then(result => {
+            console.log("verify result: ");
+            console.log(result);
+            updateCredentials({
+              loggedIn: true,
+              verificationFinished: true
             })
-        })
-        .catch(err => {
-          console.log(err);
-        })
-    } else {
-      console.log("invalid token or userid");
-      console.log("token: " + token);
-      console.log("userid: " + user.userid);
-    }
+            console.log("making get user request with userid: " + user.userid);
+            getUser(user.userid)
+              .then((res) => {
+                console.log(res);
+                if (res) {
+                  console.log("SUCCESS!");
+                  console.log(res);
+                  updateUser({
+                    userid: res.data.userid,
+                    password: res.data.password,
+                    name: res.data.name,
+                    age: res.data.age,
+                    role: res.data.role
+                  })
+                } else {
 
+                  console.log("get user failed")
+                  console.log(res);
+                  console.log(res.data);
+                  console.log(res.data.userid);
+                }
+              })
+              .catch(err => {
+                console.log(err);
+                updateCredentials({
+                  loggedIn: false,
+                  verificationFinished: true
+                })
+              })
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      } else {
+        console.log("invalid token or userid");
+        console.log("token: " + token);
+        console.log("userid: " + user.userid);
+      }
+    }
 
   }, [])
 
 
 
-  const handleUseridChange = (event) => this.updateUser({ userid: event.target.value });
+  const handleUseridChange = (event) => {
+    // event.preventDefault();
+    updateUser({ userid: event.target.value });
+  }
 
-  const handleNameChange = (event) => this.updateUser({ name: event.target.value });
+  const handleNameChange = (event) => {
+    // event.preventDefault();
+    updateUser({ name: event.target.value });
+  }
 
-  const handlePasswordChange = (event) => this.updateUser({ password: event.target.value });
+  const handlePasswordChange = (event) => {
+    // event.preventDefault();
+    updateUser({ password: event.target.value });
+  }
 
-  const handleAgeChange = (event) => this.updateUser({ age: event.target.value });
+  const handleAgeChange = (event) => { 
+    // event.preventDefault();
+    updateUser({ age: event.target.value });
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
