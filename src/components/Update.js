@@ -11,50 +11,66 @@ export const Update = (props) => {
   })
 
   const [user, updateUser] = useState({
-    userid: props.userid,
+    userid: localStorage.getItem('userid'),
     password: "",
     name: "",
-    age: null,
+    age: 0,
     role: "USER"
   })
 
-  useEffect( async () => {
-    const token = localStorage.getItem('jwt');
+  useEffect(async () => {
+    if (!credentials.loggedIn) {
 
-    const userid = localStorage.getItem('userid');
-    console.log("userid: " + userid);
 
-    const config = {
-      headers: { Authorization: `Bearer ${token}` }
-    };
+      const token = localStorage.getItem('jwt');
 
-    axios.get('http://localhost:8080/verify', config)
-      .then(result => {
-        updateCredentials({
-          loggedIn: true,
-          verificationFinished: true
-        })
-      })
-      .catch(err => {
-        console.log(err);
-        updateCredentials({
-          loggedIn: false,
-          verificationFinished: true
-        })
-      })
-    console.log("userid: " + userid);
-    const apiService = ApiService();
-    const currentUser = await apiService.getUser(userid);
-    if (currentUser) {
-      console.log("SUCCESS!");
-      console.log(currentUser);
-      updateUser({
-        userid: userid,
-        password: currentUser.password,
-        name: currentUser.name,
-        age: currentUser.age,
-        role: currentUser.role
-      })
+      console.log("logged in with userid: " + user.userid);
+      if (token && user.userid) {
+        console.log("token and userid valid");
+
+
+        const config = {
+          headers: { Authorization: `Bearer ${token}` }
+        };
+
+        axios.get('http://localhost:8080/verify', config)
+          .then(result => {
+            updateCredentials({
+              loggedIn: true,
+              verificationFinished: true
+            })
+            const apiService = ApiService();
+            apiService.getUser(user.userid).then(res => {
+              if (res) {
+                console.log("SUCCESS!");
+                console.log(res);
+                updateUser({
+                  userid: res.userid,
+                  password: res.password,
+                  name: res.name,
+                  age: res.age,
+                  role: res.role
+                })
+              } else {
+                console.log("get user failed")
+              }
+            })
+              .catch(err => {
+                console.log(err);
+                updateCredentials({
+                  loggedIn: false,
+                  verificationFinished: true
+                })
+              })
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      } else {
+        console.log("invalid token or userid");
+        console.log("token: " + token);
+        console.log("userid: " + user.userid);
+      }
     }
 
   }, [])
@@ -75,11 +91,7 @@ export const Update = (props) => {
     let result = ApiService().update(user.userid, user.password, user.name, user.age, user.role);
     if (!result) {
       console.log("ERROR");
-      // this.setState({
-      //   userid: "",
-      //   password: "",
-      //   error: true
-      // })
+
       updateUser({
         userid: user.userid,
         password: user.password,
@@ -90,7 +102,7 @@ export const Update = (props) => {
     }
   }
 
-  if (!credentials.verificationFinished) {
+  if (!credentials.verificationFinished || !credentials.loggedIn) {
     return (
       <div>Loading credentials</div>
     )
@@ -113,7 +125,7 @@ export const Update = (props) => {
               </Form.Group>
               <Form.Group>
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password"
+                <Form.Control type="text"
                   id="password"
                   name="password"
                   value={user.password}
@@ -141,8 +153,8 @@ export const Update = (props) => {
               <Form.Group>
                 <Form.Label>Role</Form.Label>
                 <Form.Control type="text"
-                  id="age"
-                  name="age"
+                  id="role"
+                  name="role"
                   value={user.role}
                   readOnly />
               </Form.Group>

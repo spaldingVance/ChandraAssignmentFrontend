@@ -28,9 +28,16 @@ class App extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     if (this.state.userid) {
-      this.setState({ name: ApiService().getUser(this.state.userid) });
+      console.log(this.state.userid);
+      const apiService = ApiService();
+      apiService.getUser(this.state.userid).then(res => {
+        console.log("RES: ");
+        console.log(res);
+        this.setState({ name: res.name });
+      })
+      
 
     } else {
       let userid = localStorage.getItem('userid');
@@ -64,23 +71,12 @@ class App extends React.Component {
       return (
 
         <Container className="appContainer" fluid>
-          <Header loggedIn={true} userid={this.state.userid} />
+          <Header loggedIn={false} userid={this.state.userid} />
           <Router>
             <Switch>
               <Route path="/user/update" userid={this.state.userid}>
                 <Update />
               </Route>
-            </Switch>
-          </Router>
-        </Container>
-      );
-    } else {
-      console.log("apparently not logged in?");
-      return (
-        <Container className="appContainer" fluid>
-          <Header loggedIn={false} />
-          <Router>
-            <Switch>
               <Route path="/user/login">
                 <Login />
               </Route>

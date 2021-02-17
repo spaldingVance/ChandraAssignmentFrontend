@@ -80,11 +80,17 @@ export const ApiService = () => {
     getUser: async (userid) => {
       axios.get(`http://localhost:8080/user/${userid}`)
         .then(response => {
-          if (response.data.user) {
-            return response.data.user;
+          console.log("Get User Response: ");
+          console.log(response);
+          if (response.data) {
+            return response.data;
+          } else {
+            return null;
           }
         })
         .catch(err => {
+          console.log("ERROR");
+          console.log(err);
           return null
         })
     },
