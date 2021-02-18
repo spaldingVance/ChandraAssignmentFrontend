@@ -10,7 +10,6 @@ import Login from './Login';
 import Header from './Header';
 import Register from './Register';
 import { Update } from './Update';
-import { ProtectedRoute } from './ProtectedRoute';
 import { ApiService } from '../service/ApiService';
 const { uuidv4 } = require('uuidv4');
 
@@ -66,12 +65,8 @@ class App extends React.Component {
   }
 
   render() {
-    // if (this.state.userid && this.state.userid.length > 0) {
-      // console.log("LOGGED IN");
       return (
-
         <Container className="appContainer" fluid>
-          <Header loggedIn={false} userid={this.state.userid} />
           <Router>
             <Switch>
               <Route path="/user/update" userid={this.state.userid}>
@@ -87,11 +82,6 @@ class App extends React.Component {
           </Router>
         </Container >
       )
-    // } else {
-    //   return (
-
-    //   )
-    // }
   }
 }
 

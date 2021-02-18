@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import Header from './Header';
+import { Button, Form, Row, Col, Container } from 'react-bootstrap';
 import { ApiService } from '../service/ApiService'
 
 export const Update = () => {
@@ -22,13 +23,9 @@ export const Update = () => {
     if (!user.name) {
       const token = localStorage.getItem('jwt');
       if (token && user.userid) {
-        console.log("token and userid valid");
-
-
         const config = {
           headers: { Authorization: `Bearer ${token}` }
         };
-
         const getUser = ApiService().getUser;
 
         axios.get('http://localhost:8080/verify', config)
@@ -39,13 +36,9 @@ export const Update = () => {
               loggedIn: true,
               verificationFinished: true
             })
-            console.log("making get user request with userid: " + user.userid);
             getUser(user.userid)
               .then((res) => {
-                console.log(res);
                 if (res) {
-                  console.log("SUCCESS!");
-                  console.log(res);
                   updateUser({
                     userid: res.data.userid,
                     password: res.data.password,
@@ -54,11 +47,7 @@ export const Update = () => {
                     role: res.data.role
                   })
                 } else {
-
                   console.log("get user failed")
-                  console.log(res);
-                  console.log(res.data);
-                  console.log(res.data.userid);
                 }
               })
               .catch(err => {
@@ -74,59 +63,74 @@ export const Update = () => {
           })
       } else {
         console.log("invalid token or userid");
-        console.log("token: " + token);
-        console.log("userid: " + user.userid);
       }
     }
-
   }, [])
 
 
 
   const handleUseridChange = (event) => {
-    // event.preventDefault();
-    updateUser({ userid: event.target.value });
+    event.preventDefault();
+    if (event.target.value) {
+      updateUser({ ...user, userid: event.target.value });
+    }
+
   }
 
   const handleNameChange = (event) => {
-    // event.preventDefault();
-    updateUser({ name: event.target.value });
+    event.preventDefault();
+    if (event.target.value) {
+      updateUser({ ...user, name: event.target.value });
+    }
   }
 
   const handlePasswordChange = (event) => {
-    // event.preventDefault();
-    updateUser({ password: event.target.value });
+    event.preventDefault();
+    if (event.target.value) {
+      updateUser({ ...user, password: event.target.value });
+    }
   }
 
-  const handleAgeChange = (event) => { 
-    // event.preventDefault();
-    updateUser({ age: event.target.value });
+  const handleAgeChange = (event) => {
+    event.preventDefault();
+    if (event.target.value) {
+      updateUser({ ...user, age: event.target.value });
+    }
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    let result = ApiService().update(user.userid, user.password, user.name, user.age, user.role);
-    if (!result) {
-      console.log("ERROR");
-
-      updateUser({
-        userid: user.userid,
-        password: user.password,
-        name: user.name,
-        age: user.age,
-        role: user.role
+    const submitUpdate = ApiService().update;
+    submitUpdate(user)
+      .then(result => {
+          updateUser({
+            userid: user.userid,
+            password: user.password,
+            name: user.name,
+            age: user.age,
+            role: user.role
+          })
       })
-    }
+      .catch(err => {
+        if (err) {
+          console.log("ERROR: ");
+          console.log(err);
+        }
+      })
+
   }
 
   if (!credentials.verificationFinished || !credentials.loggedIn) {
     return (
-      <div>Loading credentials</div>
+      <Container fluid>
+        <Header loggedIn={true} userid={user.userid} />
+        <h3>Loading credentials</h3>
+      </Container>
     )
   } else {
     return (
-      <div>
+      <Container fluid>
+        <Header loggedIn={true} userid={user.userid} />
         <Row>
           <Col md={{ span: 4, offset: 4 }} className="text-center">
             <h1>Update</h1>
@@ -181,7 +185,7 @@ export const Update = () => {
             </Form>
           </Col>
         </Row>
-      </div>
+      </Container>
     )
   }
 }

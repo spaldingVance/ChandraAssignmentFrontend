@@ -7,7 +7,6 @@ export default function Header(props) {
   if (props.loggedIn) {
     return (
       <Navbar bg="dark" variant="dark">
-        {/* <Navbar.Brand className="logo" style={{ color: "mediumseagreen" }} href="/">TODO</Navbar.Brand> */}
         <Nav className="mr-auto">
           <Nav.Link style={{ color: "mediumseagreen" }} href="/">Home</Nav.Link>
           <Nav.Link style={{ color: "mediumseagreen" }} onClick={logout} href="/">Logout</Nav.Link>
@@ -21,7 +20,6 @@ export default function Header(props) {
   } else {
     return (
       <Navbar bg="dark" variant="dark">
-        {/* <Navbar.Brand className="logo" style={{ color: "mediumseagreen" }} href="/">TODO</Navbar.Brand> */}
         <Nav className="mr-auto">
           <Nav.Link style={{ color: "mediumseagreen" }} href="/">Home</Nav.Link>
           <Nav.Link style={{ color: "mediumseagreen" }} href="/user/login">Login</Nav.Link>

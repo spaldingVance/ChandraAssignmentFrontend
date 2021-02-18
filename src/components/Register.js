@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import { Button, Form, Row, Col, Container } from 'react-bootstrap';
 import { ApiService } from '../service/ApiService'
+import Header from './Header';
 
 export default class Register extends React.Component {
 
@@ -44,7 +45,7 @@ export default class Register extends React.Component {
 
     let result = ApiService().register(this.state.userid, this.state.password, this.state.name, this.state.age, this.state.role);
     if (!result) {
-      console.log("ERROR");
+      console.log("Registration Error");
       this.setState({
         userid: "",
         password: "",
@@ -55,7 +56,8 @@ export default class Register extends React.Component {
 
   render() {
     return (
-      <div>
+      <Container fluid>
+        <Header/>
         <Row>
           <Col md={{ span: 4, offset: 4 }} className="text-center">
             <h1>Register</h1>
@@ -110,7 +112,7 @@ export default class Register extends React.Component {
             </Form>
           </Col>
         </Row>
-      </div>
+      </Container>
     )
   }
 

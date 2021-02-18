@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import Header from './Header';
+import { Button, Form, Row, Col, Container } from 'react-bootstrap';
 import { ApiService } from '../service/ApiService';
 import { Redirect } from 'react-router-dom';
 
@@ -21,7 +22,6 @@ export default class Login extends React.Component {
       redirect: null,
       error: false
     }
-
   }
 
   handleUseridChange = (event) => this.setState({ userid: event.target.value });
@@ -36,27 +36,7 @@ export default class Login extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     let apiService = ApiService();
-
     apiService.login(this.state.userid, this.state.password, this.loginCallback);
-    // if (!result) {
-    //   console.log("ERROR");
-    //   console.log(result);
-    //   // this.setState({
-    //   //   userid: "",
-    //   //   password: "",
-    //   //   error: true
-    //   // })
-    // } else {
-    //   console.log("login should be successful");
-    //   console.log("userid: " + this.state.userid);
-    //   localStorage.setItem("userid", this.state.userid);
-    //   if (result.data) {
-    //     localStorage.setItem("jwt", result.data.token);
-    //   }
-
-    //   this.setState({ redirect: "/user/update" });
-    // }
-
   }
 
   loginCallback = (response) => {
@@ -64,22 +44,19 @@ export default class Login extends React.Component {
     if (!response.data) {
       console.log("ERROR");
     } else {
-      console.log("login should be successful");
-      console.log("userid: " + this.state.userid);
       localStorage.setItem("userid", this.state.userid);
       localStorage.setItem("jwt", response.data.token);
-
       this.setState({ redirect: "/user/update" });
     }
   }
 
   render() {
     if (this.state.redirect) {
-      console.log("REDIREDCTING: =>");
       return <Redirect to={this.state.redirect} />
     } else {
       return (
-        <div>
+        <Container fluid>
+          <Header loggedIn={false} userid={this.state.userid} />
           <Row>
             <Col md={{ span: 4, offset: 4 }} className="text-center">
               <h1>Login</h1>
@@ -103,22 +80,12 @@ export default class Login extends React.Component {
                     onChange={this.handlePasswordChange}
                     required />
                 </Form.Group>
-                <Button variant="primary" type="submit">
-                  Login
-    </Button>
+                <Button variant="primary" type="submit">Login</Button>
               </Form>
             </Col>
-
           </Row>
-
-
-
-
-        </div>
-
+        </Container>
       )
     }
-
   }
-
 }

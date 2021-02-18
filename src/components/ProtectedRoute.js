@@ -1,61 +1,43 @@
-// import ApiService from '../service/ApiService';
-// import React, {useState, useEffect, Component} from "react";
-// import {Route, Redirect} from 'react-router-dom';
-// import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
+import Header from './Header';
+import { Button, Form, Row, Col, Container } from 'react-bootstrap';
+import { ApiService } from '../service/ApiService'
 
-// export const ProtectedRoute = ({ component: Component, ...rest }) => {
+export const ProtectedRoute = () => {
 
-//   const [credentials, updateCredentials] = useState({
-//     loggedIn: false,
-//     verificationFinished: false
-//   })
+  const [credentials, updateCredentials] = useState({
+    loggedIn: false,
+    verificationFinished: false
+  })
 
-//   useEffect(() => {
-//     const token = sessionStorage.getItem('jwt');
+  const [user, updateUser] = useState({
+    userid: localStorage.getItem('userid'),
+    password: "",
+    name: "",
+    age: 0,
+    role: "USER"
+  })
 
-//     const config = {
-//       headers: { Authorization: `Bearer ${token}` }
-//     };
+  
 
-//     axios.get('http://localhost:8080/verify', config)
-//       .then(result => {
-//         updateCredentials({
-//           loggedIn: true,
-//           verificationFinished: true
-//         })
-//       })
-//       .catch(err => {
-//         console.log(err);
-//         updateCredentials({
-//           loggedIn: false,
-//           verificationFinished: true
-//         })
-//       })
-//   }, [])
-
-//   if (!credentials.verificationFinished) {
-//     return (
-//       <div>Loading credentials</div>
-//     )
-//   }
-
-//   return (
-//     <Route
-//       {...rest}
-//       render={props => {
-//         if (credentials.loggedIn) {
-//           return <Component {...props} />
-//         } else {
-//           return <Redirect to={
-//             {
-//               pathname: "/login",
-//               state: {
-//                 from: props.location
-//               }
-//             }
-//           } />
-//         }
-//       }}
-//     />
-//   )
-// }
+  if (!credentials.verificationFinished || !credentials.loggedIn) {
+    return (
+      <Container fluid>
+        <Header loggedIn={true} userid={user.userid} />
+        <h3>Loading credentials</h3>
+      </Container>
+    )
+  } else {
+    return (
+      <Container fluid>
+        <Header loggedIn={true} userid={user.userid} />
+        <Row>
+          <Col md={{ span: 4, offset: 4 }} className="text-center">
+            <h1>Protected Route</h1>
+          </Col>
+        </Row>
+      </Container>
+    )
+  }
+}
